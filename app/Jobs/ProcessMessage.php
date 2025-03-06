@@ -23,11 +23,28 @@ class ProcessMessage implements ShouldQueue
 
     public function handle()
     {
-        // Simulate processing delay
-        sleep(rand(5, 60));
-
-        $this->message->update(['status' => 'processed']);
-
-        event(new MyEvent($this->message));
+        \Log::info('Starting ProcessMessage job', ['message_id' => $this->message->id]);
+    
+        try {
+            // Simulate processing delay
+            sleep(rand(5, 60));
+    
+            $this->message->update(['status' => 'processed']);
+    
+            \Log::info('Message processed', ['message_id' => $this->message->id]);
+    
+            \Log::info('Dispatching MyEvent', ['message_id' => $this->message->id]);
+            
+            event(new MyEvent($this->message, $this->message->user_identifier));
+        
+        } catch (\Exception $e) {
+        
+            \Log::error('Error in ProcessMessage job', [
+                'message_id' => $this->message->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            throw $e;
+        }
     }
 }

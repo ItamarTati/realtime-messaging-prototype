@@ -1,0 +1,10 @@
+<div>
+  <h1>Real-Time Messaging</h1>
+  <nav>
+    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Home</a> |
+    <a routerLink="/admin/messages" routerLinkActive="active">Admin</a>
+  </nav>
+  <router-outlet name="form"></router-outlet>
+  <router-outlet name="list"></router-outlet>
+  <router-outlet></router-outlet>
+</div>

@@ -1,0 +1,21 @@
+<div>
+    <h2>Pending Messages</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Content</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let message of messages">
+          <td>{{ message.content }}</td>
+          <td>{{ message.status }}</td>
+          <td>
+            <button (click)="markAsCompleted(message.id)">Mark as Completed</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>

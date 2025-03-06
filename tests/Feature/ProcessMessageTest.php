@@ -38,8 +38,6 @@ class ProcessMessageTest extends TestCase
             'status' => 'pending',
         ]);
 
-        ProcessMessage::dispatch($message);
-
         Queue::assertPushed(ProcessMessage::class, function ($job) use ($message) {
             $reflection = new \ReflectionClass($job);
             $property = $reflection->getProperty('message');

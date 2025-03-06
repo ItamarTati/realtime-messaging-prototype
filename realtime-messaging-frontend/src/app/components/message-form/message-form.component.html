@@ -1,0 +1,12 @@
+<div>
+    <form (ngSubmit)="sendMessage()">
+      <textarea
+        [(ngModel)]="content"
+        name="content"
+        placeholder="Enter your message"
+        required
+      ></textarea>
+      <button type="submit">Send</button>
+    </form>
+    <p *ngIf="error" class="error">{{ error }}</p>
+  </div>

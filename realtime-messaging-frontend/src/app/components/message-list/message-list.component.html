@@ -1,0 +1,8 @@
+<div>
+    <h2>Messages</h2>
+    <ul>
+      <li *ngFor="let message of messages">
+        <strong>{{ message.content }}</strong> - Status: {{ message.status }}
+      </li>
+    </ul>
+  </div>
