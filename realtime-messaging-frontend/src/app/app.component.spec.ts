@@ -1,29 +1,47 @@
-import { TestBed } from '@angular/core/testing';
-import { AppComponent } from './app.component';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { AdminMessageListComponent } from './components/admin-message-list/admin-message-list.component';
+import { ApiService } from './services/api.service';
+import { of } from 'rxjs';
 
-describe('AppComponent', () => {
+describe('AdminMessageListComponent', () => {
+  let component: AdminMessageListComponent;
+  let fixture: ComponentFixture<AdminMessageListComponent>;
+  let apiServiceMock: any;
+
   beforeEach(async () => {
+    apiServiceMock = {
+      getMessages: jasmine.createSpy('getMessages').and.returnValue(of([
+        { id: 1, content: 'Test Message 1', status: 'pending' },
+        { id: 2, content: 'Test Message 2', status: 'processed' },
+      ])),
+      markMessageAsCompleted: jasmine.createSpy('markMessageAsCompleted').and.returnValue(of({})),
+    };
+
     await TestBed.configureTestingModule({
-      imports: [AppComponent],
+      imports: [AdminMessageListComponent],
+      providers: [
+        { provide: ApiService, useValue: apiServiceMock },
+      ],
     }).compileComponents();
-  });
 
-  it('should create the app', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app).toBeTruthy();
-  });
-
-  it(`should have the 'realtime-messaging-frontend' title`, () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app.title).toEqual('realtime-messaging-frontend');
-  });
-
-  it('should render title', () => {
-    const fixture = TestBed.createComponent(AppComponent);
+    fixture = TestBed.createComponent(AdminMessageListComponent);
+    component = fixture.componentInstance;
     fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, realtime-messaging-frontend');
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+
+  it('should fetch and display pending messages', () => {
+    expect(apiServiceMock.getMessages).toHaveBeenCalled();
+    expect(component.messages.length).toBe(1);
+    expect(component.messages[0].content).toBe('Test Message 1');
+  });
+
+  it('should mark a message as completed', () => {
+    component.markAsCompleted(1);
+    expect(apiServiceMock.markMessageAsCompleted).toHaveBeenCalledWith(1);
+    expect(apiServiceMock.getMessages).toHaveBeenCalledTimes(2); // Called once in ngOnInit and once after marking as completed
   });
 });
