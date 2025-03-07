@@ -27,7 +27,7 @@ class ProcessMessage implements ShouldQueue
     
         try {
             // Simulate processing delay
-            sleep(rand(5, 60));
+            sleep(rand(10, 20));
     
             $this->message->update(['status' => 'processed']);
     

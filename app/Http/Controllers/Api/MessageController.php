@@ -17,18 +17,31 @@ class MessageController extends Controller
             'user_identifier' => 'required|string',
         ]);
     
+        // Check if a message with the same user_identifier exists and is already broadcasted
+        $existingMessage = Message::where('user_identifier', $request->input('user_identifier'))
+            ->where('broadcasted', true)
+            ->first();
+    
+        if ($existingMessage) {
+            return response()->json(['message' => 'This message has already been broadcasted.'], 409);
+        }
+    
         // Create the message
         $message = Message::create([
             'content' => $request->input('content'),
             'status' => 'pending',
             'user_identifier' => $request->input('user_identifier'),
+            'broadcasted' => false, // Ensure it starts as false
         ]);
     
         // Dispatch the job to process the message
         ProcessMessage::dispatch($message);
     
         // Broadcast the event
-        broadcast(event: new MyEvent($message, $message->user_identifier));
+        broadcast(new MyEvent($message->content, $message->user_identifier));
+    
+        // Mark as broadcasted
+        $message->update(['broadcasted' => true]);
     
         return response()->json([
             'message' => 'Message is being processed!',
